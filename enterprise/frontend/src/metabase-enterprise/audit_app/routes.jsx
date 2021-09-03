@@ -15,17 +15,15 @@ import AuditSchemas from "./pages/AuditSchemas";
 import AuditSchemaDetail from "./pages/AuditSchemaDetail";
 import AuditTables from "./pages/AuditTables";
 import AuditTableDetail from "./pages/AuditTableDetail";
-
 import AuditQuestions from "./pages/AuditQuestions";
 import AuditQuestionDetail from "./pages/AuditQuestionDetail";
 import AuditDashboards from "./pages/AuditDashboards";
 import AuditDashboardDetail from "./pages/AuditDashboardDetail";
 import AuditQueryDetail from "./pages/AuditQueryDetail";
-
 import AuditUsers from "./pages/AuditUsers";
 import AuditUserDetail from "./pages/AuditUserDetail";
-
 import AuditDownloads from "./pages/AuditDownloads";
+import AuditSubscriptions from "./pages/AuditSubscriptions";
 
 type Page = {
   tabs?: Tab[],
@@ -94,6 +92,7 @@ const getRoutes = (store: any) => (
     {getPageRoutes("downloads", AuditDownloads)}
     {getPageRoutes("members", AuditUsers)}
     {getPageRoutes("member/:userId", AuditUserDetail)}
+    {getPageRoutes("subscriptions", AuditSubscriptions)}
   </Route>
 );
 
