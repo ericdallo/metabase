@@ -15,6 +15,14 @@ const Alerts = createEntity({
       );
     },
 
+    setChannels: ({ id }, channels, opts) => {
+      return Alerts.actions.update(
+        { id },
+        { channels },
+        undo(opts, t`alert`, t`updated`),
+      );
+    },
+
     unsubscribe: ({ id, channels }, user, opts) => {
       const newChannels = channels.map(channel => ({
         ...channel,
