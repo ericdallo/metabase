@@ -3,11 +3,19 @@ import L from "leaflet";
 import { t } from "ttag";
 import d3 from "d3";
 
-import { rangeForValue } from "metabase/lib/dataset";
 import { color } from "metabase/lib/colors";
+import { computeNumericDataInverval } from "../lib/numeric";
 
 const isValidCoordinatesColumn = column =>
   column.binning_info || column.source === "native";
+
+const getRangeForValue = (value, column, values) => {
+  if (typeof value === "number" && column?.binning_info?.bin_width) {
+    return [value, value + column.binning_info.bin_width];
+  }
+
+  return [value, value + computeNumericDataInverval(values)];
+};
 
 export default class LeafletGridHeatMap extends LeafletMap {
   componentDidMount() {
@@ -32,6 +40,8 @@ export default class LeafletGridHeatMap extends LeafletMap {
         throw new Error(t`Grid map requires binned longitude/latitude.`);
       }
 
+      const { latitudeIndex, longitudeIndex } = this._getLatLonIndexes();
+
       const colorScale = d3.scale
         .linear()
         .domain([min, max])
@@ -52,8 +62,20 @@ export default class LeafletGridHeatMap extends LeafletMap {
 
         if (i < points.length) {
           gridSquares[i].setStyle({ color: colorScale(points[i][2]) });
-          const [latMin, latMax] = rangeForValue(points[i][0], latitudeColumn);
-          const [lonMin, lonMax] = rangeForValue(points[i][1], longitudeColumn);
+
+          const latitudeValues = points.map(row => row[latitudeIndex]);
+          const [latMin, latMax] = getRangeForValue(
+            points[i][0],
+            latitudeColumn,
+            latitudeValues,
+          );
+
+          const longitureValues = points.map(row => row[longitudeIndex]);
+          const [lonMin, lonMax] = getRangeForValue(
+            points[i][1],
+            longitudeColumn,
+            longitureValues,
+          );
           gridSquares[i].setBounds([[latMin, lonMin], [latMax, lonMax]]);
         }
       }
