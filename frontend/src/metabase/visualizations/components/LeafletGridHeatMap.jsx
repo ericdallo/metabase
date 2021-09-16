@@ -6,6 +6,9 @@ import d3 from "d3";
 import { rangeForValue } from "metabase/lib/dataset";
 import { color } from "metabase/lib/colors";
 
+const isValidCoordinatesColumn = column =>
+  column.binning_info || column.source === "native";
+
 export default class LeafletGridHeatMap extends LeafletMap {
   componentDidMount() {
     super.componentDidMount();
@@ -22,7 +25,10 @@ export default class LeafletGridHeatMap extends LeafletMap {
       const { points, min, max } = this.props;
 
       const { latitudeColumn, longitudeColumn } = this._getLatLonColumns();
-      if (!latitudeColumn.binning_info || !longitudeColumn.binning_info) {
+      if (
+        !isValidCoordinatesColumn(latitudeColumn) ||
+        !isValidCoordinatesColumn(longitudeColumn)
+      ) {
         throw new Error(t`Grid map requires binned longitude/latitude.`);
       }
 
