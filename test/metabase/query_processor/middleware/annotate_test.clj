@@ -150,8 +150,7 @@
         (is (= [{:name "DATE", :unit :month, :field_ref [:field %date {:temporal-unit :default}]}
                 {:name "LAST_LOGIN", :unit :month, :field_ref [:field
                                                                %users.last_login
-                                                               {:temporal-unit :default
-                                                                :join-alias    "USERS__via__USER_ID"}]}]
+                                                               {:temporal-unit :default}]}]
                (mapv
                 (fn [col]
                   (select-keys col [:name :unit :field_ref]))

@@ -458,6 +458,13 @@
    (cols-for-ags-and-breakouts inner-query)
    (cols-for-fields inner-query)))
 
+(defn- dissoc-join-alias
+  "Dissoc join-alias from a field_ref if the type is 'field'"
+  [field-ref]
+  (if (mbql.u/is-clause? :field field-ref)
+    (mbql.u/update-field-options field-ref dissoc :join-alias)
+    field-ref))
+
 (declare mbql-cols)
 
 (s/defn ^:private merge-source-metadata-col :- (s/maybe su/Map)
@@ -465,6 +472,10 @@
   (merge
    source-metadata-col
    col
+   ;; if a field is from a nested query, remove the `:join-alias` as to the frontend, the nested query is seen as
+   ;; a normal table and the field should not be described as a join
+   (when-let [field-ref (:field_ref col)]
+     {:field_ref (dissoc-join-alias field-ref)})
    ;; pass along the unit from the source query metadata if the top-level metadata has unit `:default`. This way the
    ;; frontend will display the results correctly if bucketing was applied in the nested query, e.g. it will format
    ;; temporal values in results using that unit
